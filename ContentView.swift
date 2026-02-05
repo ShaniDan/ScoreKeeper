@@ -10,18 +10,47 @@ import SwiftUI
 struct ContentView: View {
     // Model the players property as a String because we only need each player's name
     // Private means only this View struct can read or modify players
-    @State private var players = ["Anna", "Josh", "Elly"]
+    
+    @State private var players: [Player] = [
+        Player(name: "Anna", score: 0),
+        Player(name: "Josh", score: 0),
+        Player(name: "Tom", score: 0)
+]
+    @State var scores: [Int] = [0,0,0]
     
     var body: some View {
-        VStack {
-            Text(players[0])
-            Text(players[1])
-            Text(players[2])
-            
-            ForEach(players, id: \.self) { name in
-                Text(name)
+       
+        VStack(alignment: .leading) {
+            Text("Score Keeper")
+                .font(.title)
+                .bold()
+                .padding(.bottom)
+                .gridColumnAlignment(.leading)
+            // Why $player binding is used inside the closure?
+            Grid {
+                GridRow {
+                    Text("Player")
+                        .gridColumnAlignment(.leading)
+                    Text("Score")
+                }
+                .font(.headline)
+                
+                ForEach($players) { $player in
+                    GridRow {
+                        TextField("Name", text: $player.name)
+                        Stepper("\(player.score)", value: $player.score)
+                            .labelsHidden()
+                    }
+                }
             }
+            .padding(.vertical)
+            
+            Button("Add player", systemImage: "plus") {
+                players.append(Player(name: "", score: 0))
+            }
+            Spacer()
         }
+        .padding()
     }
 }
 
